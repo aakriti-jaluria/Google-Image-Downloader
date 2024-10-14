@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "env": {
+    "FLASK_ENV": "production"
+  },
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.11"  
+      }
+    }
+  ]
+}
