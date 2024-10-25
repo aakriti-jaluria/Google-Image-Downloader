@@ -37,7 +37,7 @@ To get this project up and running on your local machine, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/sarthak-gupta29/google_image_downloader
+   git clone https://github.com/aakriti-jaluria/Google-Image-Downloader
    ```
 
 2. Navigate to the project directory:
