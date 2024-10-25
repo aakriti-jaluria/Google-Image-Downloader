@@ -1,23 +1,68 @@
 const form = document.getElementById("downloadForm");
-const spinner = document.getElementById("loadingSpinner");
+const submitButton = document.getElementById("submitButton");
+const spinner = submitButton.querySelector(".spinner");
+const buttonText = submitButton.querySelector(".button-text");
 const messageDiv = document.getElementById("message");
 
 form.onsubmit = function(event) {
-    event.preventDefault();  // Prevent the default form submission
-    spinner.style.display = "block";  // Show the spinner
+    event.preventDefault();
+    startLoading();
+    clearMessage();
 
     const formData = new FormData(form);
+
     fetch("/submit", {
         method: "POST",
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        spinner.style.display = "none";  // Hide the spinner
-        messageDiv.innerHTML = data.message;  // Display success message
+    .then(response => {
+        if (response.headers.get("Content-Type") === "application/json") {
+            // Local scenario: display message
+            return response.json().then(data => {
+                stopLoading();
+                showMessage(data.message, "success");
+            });
+        } else {
+            // Server scenario: trigger file download
+            return response.blob().then(blob => {
+                stopLoading();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'images.zip';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                showMessage("Download complete! Check your downloads folder.", "success");
+            });
+        }
     })
     .catch(error => {
-        spinner.style.display = "none";  // Hide the spinner if there's an error
-        messageDiv.innerHTML = "Error occurred while downloading images.";
+        stopLoading();
+        showMessage("Error occurred while processing your request.", "error");
+        console.error('Error:', error);
     });
 };
+
+function startLoading() {
+    submitButton.disabled = true;
+    spinner.style.display = "block";
+    buttonText.textContent = "Processing...";
+}
+
+function stopLoading() {
+    submitButton.disabled = false;
+    spinner.style.display = "none";
+    buttonText.textContent = "Download Images";
+}
+
+function showMessage(text, type) {
+    messageDiv.textContent = text;
+    messageDiv.className = `message ${type}`;
+}
+
+function clearMessage() {
+    messageDiv.textContent = "";
+    messageDiv.className = "message";
+}
