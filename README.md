@@ -42,7 +42,7 @@ To get this project up and running on your local machine, follow these steps:
 
 2. Navigate to the project directory:
    ```
-   cd pexels-image-downloader
+   cd Google-Image-Downloader
    ```
 
 3. Install the required dependencies:
